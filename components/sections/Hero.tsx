@@ -43,7 +43,7 @@ export default function Hero() {
         <p className="font-sans text-lg text-white/90">{hero.bajada}</p>
 
         <div className="flex flex-col gap-4 sm:flex-row">
-          <Button href="/servicios/terapia-mtch" variant="primary">
+          <Button href="/servicios" variant="primary">
             Ver servicios
           </Button>
           <Button

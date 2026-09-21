@@ -57,7 +57,7 @@ export default function Header() {
         className={`sticky top-0 z-50 transition-transform duration-300 ${
           hidden ? "-translate-y-full" : "translate-y-0"
         }`}
-        style={{ background: "#F2F0EB" }}
+        style={{ background: "var(--color-niebla)" }}
       >
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-3">
           <Link href="/" className="shrink-0">
@@ -72,7 +72,7 @@ export default function Header() {
           </Link>
 
           <nav className="hidden items-center gap-8 font-medium md:flex">
-            <Link href="/" className="text-[var(--color-musgo)] hover:text-[var(--color-tierra)]">
+            <Link href="/" className="text-[var(--color-musgo)] hover:text-[var(--color-corteza)] hover:underline hover:underline-offset-4">
               Inicio
             </Link>
 
@@ -83,7 +83,7 @@ export default function Header() {
             >
               <button
                 type="button"
-                className="flex items-center gap-1 text-[var(--color-musgo)] hover:text-[var(--color-tierra)]"
+                className="flex items-center gap-1 text-[var(--color-musgo)] hover:text-[var(--color-corteza)] hover:underline hover:underline-offset-4"
                 aria-expanded={servicesOpen}
                 onClick={() => setServicesOpen((open) => !open)}
               >
@@ -110,7 +110,7 @@ export default function Header() {
               <Link
                 key={link.href}
                 href={link.href}
-                className="text-[var(--color-musgo)] hover:text-[var(--color-tierra)]"
+                className="text-[var(--color-musgo)] hover:text-[var(--color-corteza)] hover:underline hover:underline-offset-4"
               >
                 {link.label}
               </Link>

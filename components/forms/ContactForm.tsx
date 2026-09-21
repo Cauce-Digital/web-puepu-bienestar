@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, type FormEvent } from "react";
+import type { FormEvent } from "react";
 import Link from "next/link";
 import Button from "@/components/ui/Button";
 import type { ServicioTag } from "@/lib/constants";
@@ -16,15 +16,13 @@ const labelStyles =
   "pointer-events-none absolute left-1 top-5 font-sans text-[var(--color-corteza)] transition-all duration-200 peer-focus:top-0 peer-focus:text-xs peer-focus:text-[var(--color-tierra)] peer-[:not(:placeholder-shown)]:top-0 peer-[:not(:placeholder-shown)]:text-xs";
 
 export default function ContactForm({ servicio }: ContactFormProps) {
-  const formRef = useRef<HTMLFormElement>(null);
-
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     // TODO Paso 6: conectar Server Action submitContact + Turnstile.
     event.preventDefault();
   }
 
   return (
-    <form ref={formRef} onSubmit={handleSubmit} className="flex flex-col gap-8">
+    <form onSubmit={handleSubmit} className="flex flex-col gap-8">
       <input type="hidden" name="servicio" value={servicio} />
 
       <div className="relative">
@@ -82,11 +80,7 @@ export default function ContactForm({ servicio }: ContactFormProps) {
         </label>
       </div>
 
-      <Button
-        variant="primary"
-        className="w-full sm:w-auto"
-        onClick={() => formRef.current?.requestSubmit()}
-      >
+      <Button type="submit" variant="primary" className="w-full sm:w-auto">
         Enviar
       </Button>
 

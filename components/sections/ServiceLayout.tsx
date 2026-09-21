@@ -14,14 +14,18 @@ export default function ServiceLayout({ servicio }: ServiceLayoutProps) {
       <nav aria-label="Breadcrumb" className="mx-auto max-w-7xl px-6 pt-6">
         <ol className="flex items-center gap-2 font-sans text-sm text-[var(--color-corteza)]">
           <li>
-            <Link href="/" className="hover:text-[var(--color-tierra)]">
+            <Link href="/" className="hover:text-[var(--color-musgo)]">
               Inicio
             </Link>
           </li>
           <li aria-hidden="true">
             <ChevronRight size={14} />
           </li>
-          <li>Servicios</li>
+          <li>
+            <Link href="/servicios" className="hover:text-[var(--color-musgo)]">
+              Servicios
+            </Link>
+          </li>
           <li aria-hidden="true">
             <ChevronRight size={14} />
           </li>
@@ -73,7 +77,7 @@ export default function ServiceLayout({ servicio }: ServiceLayoutProps) {
           <ul className="flex max-w-[70ch] flex-col gap-2 font-sans text-base text-[var(--color-musgo)] md:text-lg">
             {servicio.comoFunciona.map((item) => (
               <li key={item} className="flex gap-2">
-                <span aria-hidden="true" className="text-[var(--color-tierra)]">
+                <span aria-hidden="true" className="text-[var(--color-corteza)]">
                   •
                 </span>
                 {item}

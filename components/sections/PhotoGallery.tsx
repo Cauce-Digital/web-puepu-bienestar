@@ -17,7 +17,7 @@ export default function PhotoGallery({ titulo, imagenes }: PhotoGalleryProps) {
         {imagenes.map((imagen) => (
           <div
             key={imagen.src}
-            className="relative aspect-square overflow-hidden rounded-xl"
+            className="relative aspect-square w-full overflow-hidden rounded-xl"
           >
             <Image
               src={imagen.src}

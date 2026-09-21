@@ -43,7 +43,7 @@ export default function Home() {
           </p>
           <Link
             href="/sobre-mi-y-contacto#sobre-mi"
-            className="font-sans font-medium text-[var(--color-tierra)] hover:underline"
+            className="font-sans font-medium text-[var(--color-corteza)] hover:underline"
           >
             Conoce mi historia
           </Link>

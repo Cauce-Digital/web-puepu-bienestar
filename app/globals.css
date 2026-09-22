@@ -11,6 +11,11 @@
   --color-cielo: #D4EAF7;
 
   color-scheme: light;
+  scroll-behavior: smooth;
+}
+
+[id] {
+  scroll-margin-top: 96px;
 }
 
 @theme inline {

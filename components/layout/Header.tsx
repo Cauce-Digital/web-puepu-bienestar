@@ -120,7 +120,7 @@ export default function Header() {
           <div className="hidden md:block">
             <Link
               href="/sobre-mi-y-contacto#contacto"
-              className="rounded-full bg-[var(--color-tierra)] px-6 py-2.5 font-medium text-white transition-colors hover:bg-[#B25A24]"
+              className="rounded-full bg-[var(--color-tierra-accion)] px-6 py-2.5 font-medium text-white transition-colors hover:bg-[var(--color-tierra-accion-hover)]"
             >
               Contáctame
             </Link>
@@ -184,7 +184,7 @@ export default function Header() {
 
             <Link
               href="/sobre-mi-y-contacto#contacto"
-              className="mt-auto rounded-full bg-[var(--color-tierra)] px-6 py-2.5 text-center font-medium text-white"
+              className="mt-auto rounded-full bg-[var(--color-tierra-accion)] px-6 py-2.5 text-center font-medium text-white"
               onClick={() => setMobileOpen(false)}
             >
               Contáctame

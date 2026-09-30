@@ -4,6 +4,7 @@ import { MessageCircle } from "lucide-react";
 import ContactForm from "@/components/forms/ContactForm";
 import InstagramIcon from "@/components/ui/InstagramIcon";
 import { sobreMiContent } from "@/lib/content/sobreMi";
+import { formatWhatsAppLink } from "@/lib/formatWhatsAppLink";
 
 export const metadata: Metadata = {
   title: "Sobre mí y Contacto | Gloria Jofré — Puepu Bienestar",
@@ -98,7 +99,7 @@ export default function SobreMiYContactoPage() {
               Contacto directo
             </h3>
             <a
-              href="https://wa.me/56952541245"
+              href={formatWhatsAppLink()}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-3 font-sans text-[var(--color-musgo)] hover:text-[var(--color-corteza)]"

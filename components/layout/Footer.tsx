@@ -3,6 +3,7 @@ import Image from "next/image";
 import { MessageCircle } from "lucide-react";
 import { homeContent } from "@/lib/content/home";
 import InstagramIcon from "@/components/ui/InstagramIcon";
+import { formatWhatsAppLink } from "@/lib/formatWhatsAppLink";
 
 const navLinks = [
   { label: "Inicio", href: "/" },
@@ -59,7 +60,7 @@ export default function Footer() {
               @puepu_bienestar
             </a>
             <a
-              href="https://wa.me/56952541245"
+              href={formatWhatsAppLink()}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-3 text-[var(--color-niebla)] hover:text-white"

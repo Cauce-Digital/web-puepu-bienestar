@@ -3,6 +3,7 @@ import Image from "next/image";
 import ProductCard from "@/components/ui/ProductCard";
 import CallToAction from "@/components/sections/CallToAction";
 import { productosContent } from "@/lib/content/productos";
+import { formatWhatsAppLink } from "@/lib/formatWhatsAppLink";
 
 export const metadata: Metadata = {
   title: "Ungüentos Puepu | Productos naturales en Valdivia",
@@ -82,7 +83,7 @@ export default function ProductosPage() {
         label="Contáctame"
         href="/sobre-mi-y-contacto#contacto"
         segundoLabel="Escríbeme por WhatsApp"
-        segundoHref="https://wa.me/56952541245"
+        segundoHref={formatWhatsAppLink()}
       />
     </>
   );

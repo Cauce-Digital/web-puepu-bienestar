@@ -6,7 +6,7 @@ import Image from "next/image";
 import { Menu, X, ChevronDown } from "lucide-react";
 
 const serviciosLinks = [
-  { label: "Terapia MTCH", href: "/servicios/terapia-mtch" },
+  { label: "Medicina Tradicional China", href: "/servicios/medicina-tradicional-china" },
   { label: "Baños de Bosque", href: "/servicios/banos-de-bosque" },
   { label: "Caminatas Medicinales", href: "/servicios/caminatas-medicinales" },
   { label: "Talleres", href: "/servicios/talleres" },
@@ -92,7 +92,7 @@ export default function Header() {
               </button>
 
               {servicesOpen && (
-                <div className="absolute left-0 top-full min-w-56 rounded-lg bg-[var(--color-niebla)] py-2 shadow-lg">
+                <div className="absolute left-0 top-full min-w-64 whitespace-nowrap rounded-lg bg-[var(--color-niebla)] py-2 shadow-lg">
                   {serviciosLinks.map((link) => (
                     <Link
                       key={link.href}

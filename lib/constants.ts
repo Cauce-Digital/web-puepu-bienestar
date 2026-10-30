@@ -1,5 +1,5 @@
 export const VALID_SERVICIOS = [
-  "Terapia MTCH",
+  "Medicina Tradicional China",
   "Baños de Bosque",
   "Caminatas Medicinales",
   "Talleres",

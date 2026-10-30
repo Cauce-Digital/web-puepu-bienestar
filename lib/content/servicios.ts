@@ -14,7 +14,7 @@ export type ServicioLanding = {
 };
 
 export type ServicioSlug =
-  | "terapia-mtch"
+  | "medicina-tradicional-china"
   | "banos-de-bosque"
   | "caminatas-medicinales"
   | "talleres";
@@ -28,13 +28,13 @@ function getImagenServicio(href: string): HomeImage {
 }
 
 export const serviciosContent: Record<ServicioSlug, ServicioLanding> = {
-  "terapia-mtch": {
-    slug: "terapia-mtch",
-    nombre: "Terapia MTCH",
-    tag: "Terapia MTCH",
+  "medicina-tradicional-china": {
+    slug: "medicina-tradicional-china",
+    nombre: "Medicina Tradicional China",
+    tag: "Medicina Tradicional China",
     descripcionCorta:
       "Sesiones individuales con las técnicas de la Medicina Tradicional China, en un espacio acogedor y seguro.",
-    imagen: getImagenServicio("/servicios/terapia-mtch"),
+    imagen: getImagenServicio("/servicios/medicina-tradicional-china"),
     queEs: [
       "Sesiones individuales bajo la línea de la Medicina Tradicional China, integrando sus diversas técnicas en un espacio acogedor, seguro y con respaldo profesional. Un enfoque integral, con afecto, empatía y el tiempo necesario para conocer, orientar y acompañar a cada paciente en su búsqueda de bienestar, equilibrio y salud.",
       "Formación: 4 años en la Escuela Latinoamericana de Medicina Tradicional China, pasantía en China y especialización en Nutrición Oriental.",

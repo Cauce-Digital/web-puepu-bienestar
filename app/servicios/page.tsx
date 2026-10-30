@@ -4,7 +4,7 @@ import ServicesGrid from "@/components/sections/ServicesGrid";
 export const metadata: Metadata = {
   title: "Servicios | Puepu Bienestar",
   description:
-    "Terapia MTCH, baños de bosque, caminatas medicinales y talleres con Gloria Jofré en la Selva Valdiviana, Valdivia.",
+    "Medicina Tradicional China, baños de bosque, caminatas medicinales y talleres con Gloria Jofré en la Selva Valdiviana, Valdivia.",
 };
 
 export default function ServiciosPage() {

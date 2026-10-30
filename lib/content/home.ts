@@ -48,14 +48,14 @@ export const homeContent: HomeContent = {
   },
   servicios: [
     {
-      nombre: "Terapia MTCH",
+      nombre: "Medicina Tradicional China",
       descripcion:
         "Sesiones individuales con las técnicas de la Medicina Tradicional China, en un espacio acogedor y seguro.",
       imagen: {
         src: "/images/galeria/fotos-cardamo.jpg",
         alt: "Flor de cardo de mar con cabezuelas espinosas verde-blanquecinas frente al océano, bajo cielo despejado.",
       },
-      href: "/servicios/terapia-mtch",
+      href: "/servicios/medicina-tradicional-china",
     },
     {
       nombre: "Baños de Bosque",

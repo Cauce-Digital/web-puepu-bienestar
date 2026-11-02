@@ -89,7 +89,7 @@ export default function ServiceLayout({ servicio }: ServiceLayoutProps) {
 
       <section
         id="contacto"
-        className="border-l-4 border-[var(--color-tierra)] bg-[var(--color-niebla)] px-6 py-16 md:py-24"
+        className="border-l-4 border-[var(--color-tierra)] bg-[var(--color-niebla)] px-6 py-16"
       >
         <div className="mx-auto flex max-w-2xl flex-col gap-8">
           <h2 className="font-display text-3xl text-[var(--color-musgo)] md:text-4xl">

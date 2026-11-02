@@ -8,6 +8,7 @@ type ButtonProps = {
   href?: string;
   onClick?: () => void;
   type?: ButtonType;
+  disabled?: boolean;
   children: React.ReactNode;
   className?: string;
 };
@@ -27,6 +28,7 @@ export default function Button({
   href,
   onClick,
   type = "button",
+  disabled = false,
   children,
   className = "",
 }: ButtonProps) {
@@ -49,7 +51,12 @@ export default function Button({
   }
 
   return (
-    <button type={type} onClick={onClick} className={styles}>
+    <button
+      type={type}
+      onClick={onClick}
+      disabled={disabled}
+      className={`${styles} disabled:cursor-not-allowed disabled:opacity-60`}
+    >
       {children}
     </button>
   );

@@ -84,7 +84,7 @@ export default function SobreMiYContactoPage() {
         </div>
       </section>
 
-      <section id="contacto" className="mx-auto max-w-7xl px-6 py-16 md:py-24">
+      <section id="contacto" className="mx-auto max-w-7xl px-6 py-16">
         <div className="grid grid-cols-1 gap-12 md:grid-cols-2">
           <div className="flex flex-col gap-6 border-l-4 border-[var(--color-tierra)] bg-[var(--color-niebla)] p-6 md:p-8">
             <h2 className="font-display text-3xl text-[var(--color-musgo)] md:text-4xl">

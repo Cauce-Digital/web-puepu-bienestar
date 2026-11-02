@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useId, useRef } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import Script from "next/script";
 
 type TurnstileRenderOptions = {
@@ -27,6 +27,7 @@ type TurnstileWidgetProps = {
   onVerify: (token: string) => void;
   onExpire: () => void;
   resetKey?: number;
+  className?: string;
 };
 
 const SCRIPT_SRC =
@@ -36,9 +37,23 @@ export default function TurnstileWidget({
   onVerify,
   onExpire,
   resetKey,
+  className,
 }: TurnstileWidgetProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const containerId = useId();
+  // En modo Invisible el widget no ocupa alto; data-visible permite que el
+  // contenedor solo agregue separación cuando Turnstile muestra algo.
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container || typeof ResizeObserver === "undefined") return;
+    const observer = new ResizeObserver(([entry]) => {
+      setVisible(entry.contentRect.height > 0);
+    });
+    observer.observe(container);
+    return () => observer.disconnect();
+  }, []);
 
   const onVerifyRef = useRef(onVerify);
   const onExpireRef = useRef(onExpire);
@@ -93,7 +108,12 @@ export default function TurnstileWidget({
   return (
     <>
       <Script src={SCRIPT_SRC} strategy="afterInteractive" />
-      <div ref={containerRef} id={containerId} />
+      <div
+        ref={containerRef}
+        id={containerId}
+        data-visible={visible}
+        className={className}
+      />
     </>
   );
 }

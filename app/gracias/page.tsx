@@ -19,7 +19,7 @@ export default function Gracias() {
           Tu mensaje fue enviado
         </h1>
         <p className="font-sans text-base text-[var(--color-musgo)] md:text-lg">
-          Gloria te contactará pronto.
+          Pronto me pondré en contacto.
         </p>
         <div className="mt-4 flex flex-col gap-4 sm:flex-row">
           <Button href="/" variant="primary">

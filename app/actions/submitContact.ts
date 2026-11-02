@@ -3,11 +3,17 @@
 import { Resend } from "resend";
 import { escapeHtml } from "@/lib/escapeHtml";
 import { VALID_SERVICIOS, type ServicioTag } from "@/lib/constants";
+import { validarTelefono } from "@/lib/telefono";
+
+export type CampoFormulario = "nombre" | "correo" | "telefono" | "mensaje";
+
+export type FieldErrors = Partial<Record<CampoFormulario, string>>;
 
 export type ContactFormResult = {
   success: boolean;
   error?: string;
   errorType?: "validacion" | "turnstile" | "envio";
+  fieldErrors?: FieldErrors;
 };
 
 type ContactFormData = {
@@ -21,7 +27,6 @@ type ContactFormData = {
 const MAX_LENGTHS = {
   nombre: 100,
   correo: 200,
-  telefono: 20,
   mensaje: 2000,
 } as const;
 
@@ -33,32 +38,66 @@ const TURNSTILE_TIMEOUT_MS = 5000;
 const ERROR_MESSAGES = {
   validacion: "Revisa los datos del formulario e intenta de nuevo.",
   turnstile: "No pudimos verificar tu envío. Intenta de nuevo.",
-  envio: "No pudimos enviar tu mensaje. Escríbenos por WhatsApp.",
+  envio: "No pudimos enviar tu mensaje.",
 } as const;
 
-function fail(errorType: "validacion" | "turnstile" | "envio"): ContactFormResult {
-  return { success: false, errorType, error: ERROR_MESSAGES[errorType] };
+const FIELD_MESSAGES: Record<Exclude<CampoFormulario, "telefono">, string> = {
+  nombre: "Escribe tu nombre (máx. 100 caracteres).",
+  correo: "Revisa el formato del correo.",
+  mensaje: "Escribe tu mensaje (máx. 2000 caracteres).",
+};
+
+type ValidationResult =
+  | { ok: true; data: ContactFormData }
+  | { ok: false; fieldErrors: FieldErrors };
+
+function fail(
+  errorType: "validacion" | "turnstile" | "envio",
+  fieldErrors?: FieldErrors,
+): ContactFormResult {
+  return { success: false, errorType, error: ERROR_MESSAGES[errorType], fieldErrors };
 }
 
-function validate(formData: FormData): ContactFormData | null {
+function validate(formData: FormData): ValidationResult {
   const nombre = String(formData.get("nombre") ?? "").trim();
   const correo = String(formData.get("correo") ?? "").trim();
-  const telefono = String(formData.get("telefono") ?? "").trim();
+  const telefonoInput = String(formData.get("telefono") ?? "").trim();
+  const telefonoPais = String(formData.get("telefonoPais") ?? "").trim();
   const mensaje = String(formData.get("mensaje") ?? "").trim();
   const servicioInput = String(formData.get("servicio") ?? "").trim();
 
-  if (!nombre || !correo || !mensaje) return null;
-  if (nombre.length > MAX_LENGTHS.nombre) return null;
-  if (correo.length > MAX_LENGTHS.correo) return null;
-  if (telefono.length > MAX_LENGTHS.telefono) return null;
-  if (mensaje.length > MAX_LENGTHS.mensaje) return null;
-  if (!EMAIL_REGEX.test(correo)) return null;
+  const fieldErrors: FieldErrors = {};
+
+  if (!nombre || nombre.length > MAX_LENGTHS.nombre) {
+    fieldErrors.nombre = FIELD_MESSAGES.nombre;
+  }
+  if (!correo || correo.length > MAX_LENGTHS.correo || !EMAIL_REGEX.test(correo)) {
+    fieldErrors.correo = FIELD_MESSAGES.correo;
+  }
+  if (!mensaje || mensaje.length > MAX_LENGTHS.mensaje) {
+    fieldErrors.mensaje = FIELD_MESSAGES.mensaje;
+  }
+
+  // Opcional: solo se valida si viene con contenido.
+  let telefono = "";
+  if (telefonoInput) {
+    const resultado = validarTelefono(telefonoPais, telefonoInput);
+    if (resultado.ok) {
+      telefono = resultado.formateado;
+    } else {
+      fieldErrors.telefono = resultado.error;
+    }
+  }
+
+  if (Object.keys(fieldErrors).length > 0) {
+    return { ok: false, fieldErrors };
+  }
 
   const servicio = (VALID_SERVICIOS as readonly string[]).includes(servicioInput)
     ? (servicioInput as ServicioTag)
     : "Contacto General";
 
-  return { nombre, correo, telefono, mensaje, servicio };
+  return { ok: true, data: { nombre, correo, telefono, mensaje, servicio } };
 }
 
 async function verifyTurnstile(token: string): Promise<boolean> {
@@ -177,10 +216,11 @@ export async function submitContact(
   _prevState: ContactFormResult,
   formData: FormData,
 ): Promise<ContactFormResult> {
-  const data = validate(formData);
-  if (!data) {
-    return fail("validacion");
+  const validation = validate(formData);
+  if (!validation.ok) {
+    return fail("validacion", validation.fieldErrors);
   }
+  const { data } = validation;
 
   const turnstileToken = String(formData.get("cf-turnstile-response") ?? "");
   if (!turnstileToken) {

@@ -6,6 +6,7 @@ import ServicesGrid from "@/components/sections/ServicesGrid";
 import PhotoGallery from "@/components/sections/PhotoGallery";
 import CallToAction from "@/components/sections/CallToAction";
 import { homeContent } from "@/lib/content/home";
+import { INSTAGRAM_URL } from "@/lib/constants";
 
 export const metadata: Metadata = {
   title: "Puepu Bienestar | Medicina Tradicional China y Baños de Bosque en Valdivia",
@@ -52,10 +53,19 @@ export default function Home() {
 
       <ServicesGrid />
 
-      <PhotoGallery titulo="Del bosque" imagenes={homeContent.galeria} />
+      <PhotoGallery
+        titulo="Sígueme en Instagram"
+        texto="Comparto el bosque, las plantas y mis actividades en @puepu_bienestar."
+        imagenes={homeContent.galeria}
+        enlace={{
+          href: INSTAGRAM_URL,
+          ariaLabel: "Ver en Instagram (se abre en una pestaña nueva)",
+          ctaLabel: "Ver en Instagram",
+        }}
+      />
 
       <CallToAction
-        titulo="¿Lista para comenzar?"
+        titulo="¿Te animas a comenzar?"
         label="Escríbeme"
         href="/sobre-mi-y-contacto#contacto"
       />

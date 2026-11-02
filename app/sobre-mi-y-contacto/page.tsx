@@ -5,6 +5,7 @@ import ContactForm from "@/components/forms/ContactForm";
 import InstagramIcon from "@/components/ui/InstagramIcon";
 import { sobreMiContent } from "@/lib/content/sobreMi";
 import { formatWhatsAppLink } from "@/lib/formatWhatsAppLink";
+import { INSTAGRAM_URL } from "@/lib/constants";
 
 export const metadata: Metadata = {
   title: "Sobre mí y Contacto | Gloria Jofré — Puepu Bienestar",
@@ -108,7 +109,7 @@ export default function SobreMiYContactoPage() {
               WhatsApp
             </a>
             <a
-              href="https://www.instagram.com/puepu_bienestar"
+              href={INSTAGRAM_URL}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-3 font-sans text-[var(--color-musgo)] hover:text-[var(--color-corteza)]"

@@ -74,16 +74,22 @@ export default function ServiceLayout({ servicio }: ServiceLayoutProps) {
           <h2 className="font-display text-3xl text-[var(--color-musgo)] md:text-4xl">
             ¿Cómo funciona?
           </h2>
-          <ul className="flex max-w-[70ch] flex-col gap-2 font-sans text-base text-[var(--color-musgo)] md:text-lg">
-            {servicio.comoFunciona.map((item) => (
-              <li key={item} className="flex gap-2">
-                <span aria-hidden="true" className="text-[var(--color-corteza)]">
-                  •
-                </span>
-                {item}
-              </li>
-            ))}
-          </ul>
+          {servicio.comoFunciona.length === 1 ? (
+            <p className="max-w-[70ch] font-sans text-base text-[var(--color-musgo)] md:text-lg">
+              {servicio.comoFunciona[0]}
+            </p>
+          ) : (
+            <ul className="flex max-w-[70ch] flex-col gap-2 font-sans text-base text-[var(--color-musgo)] md:text-lg">
+              {servicio.comoFunciona.map((item) => (
+                <li key={item} className="flex gap-2">
+                  <span aria-hidden="true" className="text-[var(--color-corteza)]">
+                    •
+                  </span>
+                  {item}
+                </li>
+              ))}
+            </ul>
+          )}
         </section>
       </div>
 

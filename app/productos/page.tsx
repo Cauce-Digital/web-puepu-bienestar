@@ -62,6 +62,7 @@ export default function ProductosPage() {
             </div>
             <figcaption className="font-sans text-sm text-[var(--color-corteza)]">
               La línea completa de Ungüentos Puepu
+              <span className="mt-1 block text-xs">*Cesta no incluida.</span>
             </figcaption>
           </figure>
 

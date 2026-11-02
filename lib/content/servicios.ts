@@ -90,19 +90,21 @@ export const serviciosContent: Record<ServicioSlug, ServicioLanding> = {
     nombre: "Talleres",
     tag: "Talleres",
     descripcionCorta:
-      "Elaboración de productos con plantas medicinales y talleres de flora nativa para colegios, en la Selva Valdiviana.",
+      "Talleres de elaboración de productos con plantas medicinales, actividades de autocuidado en la naturaleza y educación ambiental.",
     imagen: getImagenServicio("/servicios/talleres"),
     queEs: [
-      "Dos líneas de trabajo: elaboración de productos con base en plantas medicinales para la salud y el autocuidado, y reconocimiento de flora nativa de la Selva Valdiviana y sus usos medicinales, para colegios.",
+      "Talleres prácticos que acercan las plantas medicinales y el bosque valdiviano a distintos grupos, en tres líneas de trabajo:",
+      "Elaboración de variados productos en base a plantas medicinales, con especial foco en las plantas nativas del bosque valdiviano.",
+      "Actividades de autocuidado para instituciones o empresas, desarrolladas en la naturaleza, preferentemente en el bosque valdiviano.",
+      "Educación ambiental para estudiantes, según requerimientos curriculares.",
     ],
     paraQuien: [
-      "Adultos interesados en plantas medicinales y autocuidado.",
-      "Colegios, desde preescolar a enseñanza media, con enfoque de educación ambiental o contenidos curriculares.",
+      "Personas interesadas en las plantas medicinales y el autocuidado.",
+      "Instituciones y empresas que buscan actividades para sus equipos en la naturaleza.",
+      "Establecimientos educacionales, para estudiantes de todos los niveles.",
     ],
     comoFunciona: [
-      "Talleres para adultos: elaboración de productos con plantas medicinales",
-      "Talleres para colegios: flora nativa y educación ambiental",
-      "Fechas y modalidad: consulta directamente",
+      "Envía tus consultas y requerimientos a través del formulario y coordinamos la información necesaria.",
     ],
   },
 };

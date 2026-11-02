@@ -4,6 +4,7 @@ import { MessageCircle } from "lucide-react";
 import { homeContent } from "@/lib/content/home";
 import InstagramIcon from "@/components/ui/InstagramIcon";
 import { formatWhatsAppLink } from "@/lib/formatWhatsAppLink";
+import { INSTAGRAM_URL } from "@/lib/constants";
 
 const navLinks = [
   { label: "Inicio", href: "/" },
@@ -51,7 +52,7 @@ export default function Footer() {
               Sígueme
             </h3>
             <a
-              href="https://www.instagram.com/puepu_bienestar"
+              href={INSTAGRAM_URL}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-3 text-[var(--color-niebla)] hover:text-white"

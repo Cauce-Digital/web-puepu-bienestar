@@ -80,7 +80,7 @@ export const homeContent: HomeContent = {
     {
       nombre: "Talleres",
       descripcion:
-        "Elaboración de productos con plantas medicinales y educación ambiental para colegios.",
+        "Plantas medicinales, autocuidado en la naturaleza y educación ambiental para personas, instituciones y estudiantes.",
       imagen: {
         src: "/images/galeria/fotos-flores.jpg",
         alt: "Arbusto nativo con flores blancas acampanuladas colgantes junto a frutos y flores naranjas en racimo.",

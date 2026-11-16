@@ -43,3 +43,6 @@ next-env.d.ts
 
 # scratch (temporales del agente)
 scratch/
+
+# archivos retirados pendientes de revisión
+Trash-Review/

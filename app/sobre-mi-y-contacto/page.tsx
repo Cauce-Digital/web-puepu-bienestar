@@ -6,12 +6,14 @@ import InstagramIcon from "@/components/ui/InstagramIcon";
 import { sobreMiContent } from "@/lib/content/sobreMi";
 import { formatWhatsAppLink } from "@/lib/formatWhatsAppLink";
 import { INSTAGRAM_URL } from "@/lib/constants";
+import { buildMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Sobre mí y Contacto | Gloria Jofré — Puepu Bienestar",
+export const metadata: Metadata = buildMetadata({
+  title: "Sobre mí y contacto: Gloria Jofré",
   description:
     "Conoce a Gloria Jofré, terapeuta en Medicina Tradicional China y guía del bosque valdiviano, y escríbele para agendar tu sesión o resolver dudas.",
-};
+  path: "/sobre-mi-y-contacto",
+});
 
 export default function SobreMiYContactoPage() {
   const { imagen, titulo, roles, historia, formacion, acreditacion, enfoque, contacto } =

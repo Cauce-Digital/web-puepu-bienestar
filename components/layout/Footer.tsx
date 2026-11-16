@@ -22,7 +22,7 @@ export default function Footer() {
           <div className="flex flex-col gap-3">
             <Image
               src="/images/logos/puepu-blanco.png"
-              alt="Logo Puepu Bienestar"
+              alt="Puepu Bienestar"
               width={100}
               height={40}
               style={{ filter: "invert(1) brightness(2)" }}

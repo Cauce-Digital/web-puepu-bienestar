@@ -4,12 +4,14 @@ import ProductCard from "@/components/ui/ProductCard";
 import CallToAction from "@/components/sections/CallToAction";
 import { productosContent } from "@/lib/content/productos";
 import { formatWhatsAppLink } from "@/lib/formatWhatsAppLink";
+import { buildMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Ungüentos Puepu | Productos naturales en Valdivia",
+export const metadata: Metadata = buildMetadata({
+  title: "Ungüentos naturales en Valdivia",
   description:
     "Ungüentos naturales elaborados por Gloria Jofré con plantas medicinales de la Selva Valdiviana, para dolores articulares, tensión muscular y más.",
-};
+  path: "/productos",
+});
 
 export default function ProductosPage() {
   const { intro, lineaCompleta, productos } = productosContent;

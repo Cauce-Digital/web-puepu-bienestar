@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 import ServicesGrid from "@/components/sections/ServicesGrid";
+import { buildMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Servicios | Puepu Bienestar",
+export const metadata: Metadata = buildMetadata({
+  title: "Servicios",
   description:
     "Medicina Tradicional China, baños de bosque, caminatas medicinales y talleres con Gloria Jofré en la Selva Valdiviana, Valdivia.",
-};
+  path: "/servicios",
+});
 
 export default function ServiciosPage() {
   return (

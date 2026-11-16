@@ -63,7 +63,7 @@ export default function Header() {
           <Link href="/" className="shrink-0">
             <Image
               src="/images/logos/puepu-blanco.png"
-              alt="Logo Puepu Bienestar"
+              alt="Puepu Bienestar, inicio"
               width={120}
               height={48}
               className="object-contain"

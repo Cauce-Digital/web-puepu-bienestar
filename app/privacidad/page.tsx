@@ -1,12 +1,14 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { formatWhatsAppLink } from "@/lib/formatWhatsAppLink";
+import { buildMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Política de privacidad | Puepu Bienestar",
+export const metadata: Metadata = buildMetadata({
+  title: "Política de privacidad",
   description:
     "Cómo Puepu Bienestar trata los datos que ingresas en el formulario de contacto.",
-};
+  path: "/privacidad",
+});
 
 const h2Styles =
   "font-sans text-xl font-semibold text-[var(--color-musgo)] md:text-2xl";

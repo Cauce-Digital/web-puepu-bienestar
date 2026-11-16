@@ -7,12 +7,17 @@ import PhotoGallery from "@/components/sections/PhotoGallery";
 import CallToAction from "@/components/sections/CallToAction";
 import { homeContent } from "@/lib/content/home";
 import { INSTAGRAM_URL } from "@/lib/constants";
+import { buildMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Puepu Bienestar | Medicina Tradicional China y Baños de Bosque en Valdivia",
+export const metadata: Metadata = buildMetadata({
+  title: {
+    absolute:
+      "Puepu Bienestar | Medicina Tradicional China y Baños de Bosque en Valdivia",
+  },
   description:
     "Gloria Jofré, terapeuta en Medicina Tradicional China. Baños de bosque, caminatas medicinales y talleres en la Selva Valdiviana.",
-};
+  path: "/",
+});
 
 export default function Home() {
   const { quienSoy } = homeContent;

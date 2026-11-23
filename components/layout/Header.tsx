@@ -65,7 +65,7 @@ export default function Header() {
               src="/images/logos/puepu-blanco.png"
               alt="Puepu Bienestar, inicio"
               width={120}
-              height={48}
+              height={80}
               className="object-contain"
               priority
             />

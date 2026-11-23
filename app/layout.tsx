@@ -34,6 +34,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="es"
+      data-scroll-behavior="smooth"
       className={`${bebasNeue.variable} ${dmSans.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col font-sans bg-[var(--color-niebla)] text-[var(--color-musgo)]">

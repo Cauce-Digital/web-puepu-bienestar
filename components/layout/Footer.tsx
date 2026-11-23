@@ -24,7 +24,7 @@ export default function Footer() {
               src="/images/logos/puepu-blanco.png"
               alt="Puepu Bienestar"
               width={100}
-              height={40}
+              height={67}
               style={{ filter: "invert(1) brightness(2)" }}
             />
             <p className="font-sans text-sm text-[var(--color-niebla)]/80">

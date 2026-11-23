@@ -32,7 +32,7 @@ export default function Hero() {
           src="/images/logos/puepu-blanco.png"
           alt="Logo Puepu Bienestar"
           width={160}
-          height={64}
+          height={107}
           style={{ filter: "invert(1) brightness(2)" }}
         />
 

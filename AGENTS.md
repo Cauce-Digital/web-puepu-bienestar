@@ -6,8 +6,6 @@ Este documento vive en la raíz del repositorio como `AGENTS.md` y se carga auto
 
 ⚠️ **Nota sobre CLAUDE.md:** `create-next-app` genera automáticamente un `CLAUDE.md` con una sola línea (`@AGENTS.md`). No lo edites — es un puntero automático. La fuente de verdad siempre es este archivo.
 
-⚠️ **Nota sobre el bloque agentRules:** Next.js 15.2+ inyecta automáticamente contenido en este archivo entre los markers `<!-- BEGIN:nextjs-agent-rules -->` y `<!-- END:nextjs-agent-rules -->`. Ese bloque es gestionado por el framework — no lo borres. Todo el contenido personalizado de este archivo vive fuera de esos markers.
-
 ## Protocolo de comandos y archivos (regla dura)
 
 ### Alcance
@@ -61,9 +59,11 @@ Cada pedido de aprobación se explica en una línea simple, para alguien que no 
 
 ## 1. Contexto del proyecto
 
-**Proyecto:** Sitio web estático/semi-estático para Gloria Jofré Cabello — terapeuta MTCH y guía de bienestar en Valdivia, Chile.
+**Proyecto:** Sitio web estático/semi-estático para Gloria Jofré Cabello — terapeuta en Medicina Tradicional China y guía de bienestar en Valdivia, Chile.
 
-**Stack:** Next.js 15 + React 19 + TypeScript + Tailwind CSS v4
+**Stack:** Next.js 16.3.5 + React 19.2 + TypeScript + Tailwind CSS v4
+
+**Hosting:** Vercel, cuenta Cauce Digital, plan Hobby.
 
 **Sin base de datos.** No hay BD propia en este proyecto. La única lógica de servidor es el Server Action del formulario de contacto.
 
@@ -94,26 +94,36 @@ Pasos:
   1. Validar que todos los campos requeridos estén presentes y no vacíos
   2. Sanitizar inputs: trim() en todos los campos de texto
   3. Validar formato de correo (regex básico o librería)
-  4. Verificar el token de Turnstile contra la API de Cloudflare:
+  4. Verificar el token de Turnstile (widget en modo Invisible) contra la API de Cloudflare:
      POST https://challenges.cloudflare.com/turnstile/v0/siteverify
      body: { secret: TURNSTILE_SECRET_KEY, response: turnstileToken }
   5. Si Turnstile falla → retornar error (no enviar correo)
   6. Si Turnstile pasa → llamar a Resend API:
-     - from: "Puepu Bienestar <noreply@puepu-bienestar.com>"
+     - from: CONTACT_FROM_EMAIL (variable de entorno; en producción usará
+       el dominio puepubienestar.cl verificado en Resend)
      - to: CONTACT_EMAIL (variable de entorno)
      - subject: `Nuevo contacto desde Puepu Bienestar — ${servicio}`
      - html: plantilla con nombre, correo, teléfono, mensaje
   7. Si Resend falla → retornar error con mensaje amigable
   8. Si Resend pasa → retornar { success: true }
-  (la redirección a /gracias la maneja el componente cliente)
 
 Output:
-  { success: boolean, error?: string }
+  {
+    success: boolean,
+    error?: string,
+    errorType?: "validacion" | "turnstile" | "envio",
+    fieldErrors?: { nombre?, correo?, telefono?, mensaje? }
+  }
+
+Cliente (components/forms/ContactForm.tsx):
+  - El envío usa onSubmit + startTransition (no action directo del form).
+  - Si success → marca "puepu-form-enviado" en sessionStorage y router.push("/gracias").
+  - /gracias está protegida por GraciasGuard: sin la marca, router.replace("/").
 ```
 
-**Valores válidos para el campo `servicio`:**
+**Valores válidos para el campo `servicio`** (fuente: `lib/constants.ts`, `VALID_SERVICIOS`):
 
-- "Terapia MTCH"
+- "Medicina Tradicional China"
 - "Baños de Bosque"
 - "Caminatas Medicinales"
 - "Talleres"
@@ -122,14 +132,18 @@ Output:
 ### Variables de entorno requeridas
 
 ```env
-RESEND_API_KEY=           # Clave API de Resend (solo servidor)
-TURNSTILE_SECRET_KEY=     # Clave secreta de Turnstile (solo servidor)
+RESEND_API_KEY=                  # Clave API de Resend (solo servidor)
+TURNSTILE_SECRET_KEY=            # Clave secreta de Turnstile (solo servidor)
 NEXT_PUBLIC_TURNSTILE_SITE_KEY=  # Clave pública de Turnstile (cliente)
-CONTACT_EMAIL=            # Correo de Gloria donde llegan los formularios
-WHATSAPP_NUMBER=          # +56952541245 (usado en links y botones)
+CONTACT_EMAIL=                   # Correo donde llegan los formularios (solo servidor)
+CONTACT_FROM_EMAIL=              # Remitente de las notificaciones (solo servidor)
+NEXT_PUBLIC_WHATSAPP_NUMBER=     # Número de WhatsApp para links y botones (cliente)
+NEXT_PUBLIC_SITE_URL=            # URL pública del sitio, https://puepubienestar.cl (solo Production en Vercel)
 ```
 
-**Regla:** Ninguna variable de entorno privada (`RESEND_API_KEY`, `TURNSTILE_SECRET_KEY`, `CONTACT_EMAIL`) puede aparecer en código del lado cliente. Solo `NEXT_PUBLIC_*` van al cliente.
+Plantilla sin valores reales: `.env.example`.
+
+**Regla:** Ninguna variable de entorno privada (`RESEND_API_KEY`, `TURNSTILE_SECRET_KEY`, `CONTACT_EMAIL`, `CONTACT_FROM_EMAIL`) puede aparecer en código del lado cliente. Solo `NEXT_PUBLIC_*` van al cliente.
 
 ## 3. Estructura de archivos
 
@@ -139,39 +153,50 @@ puepu-bienestar/
 ├── README.md
 ├── package.json
 ├── next.config.ts
-├── tailwind.config.ts
 ├── tsconfig.json
 ├── .env.local                         ← NUNCA commitear
 ├── .env.example                       ← versión sin valores reales
 ├── .gitignore
+├── .claude/
+│   └── settings.json                  ← permisos de Claude Code (refuerzo técnico)
 ├── scratch/                           ← temporales, ignorados por git
+├── Trash-Review/                      ← archivos prescindibles, ignorados por git
 │
 ├── public/
-│   ├── images/
-│   │   ├── hero/
-│   │   │   └── cardo-mar.webp         ← foto principal del hero
-│   │   ├── servicios/
-│   │   │   ├── banos-bosque.webp
-│   │   │   ├── caminatas.webp
-│   │   │   ├── talleres.webp
-│   │   │   └── terapia-mtch.webp      ← pendiente foto de Gloria en sesión
-│   │   ├── galeria/
-│   │   │   ├── bosque-01.webp
-│   │   │   ├── bosque-02.webp
-│   │   │   ├── flores-nativas.webp
-│   │   │   └── epifita.webp
-│   │   └── logos/
-│   │       ├── puepu-naranja.svg
-│   │       ├── puepu-verde.svg
-│   │       ├── puepu-blanco.svg
-│   │       └── puepu-bn.svg
-│   ├── favicon.ico
-│   └── og-image.jpg                   ← imagen Open Graph para redes sociales
+│   ├── puepu-opengraph.jpg            ← imagen Open Graph para redes sociales
+│   └── images/
+│       ├── hero/
+│       │   └── selva-hero.jpg         ← foto principal del hero
+│       ├── servicios/                 ← vacía por ahora
+│       ├── galeria/
+│       │   └── fotos-*.jpg            ← arbol, bosque, bosque2, caminata, cardamo, cardamo2, flores
+│       ├── productos/
+│       │   └── productos-*.jpg        ← fotos de cada ungüento
+│       └── logos/
+│           ├── puepu-naranjo.png
+│           ├── puepu-verde.png
+│           ├── puepu-blanco.png
+│           └── puepu-bn.png
+│
+├── lib/
+│   ├── site.ts                        ← URL base del sitio (NEXT_PUBLIC_SITE_URL)
+│   ├── seo.ts                         ← metadata compartida y Open Graph
+│   ├── constants.ts                   ← VALID_SERVICIOS, INSTAGRAM_URL
+│   ├── escapeHtml.ts                  ← escape del HTML del correo
+│   ├── telefono.ts                    ← validación de teléfono
+│   ├── formatWhatsAppLink.ts          ← link de WhatsApp (NEXT_PUBLIC_WHATSAPP_NUMBER)
+│   └── content/
+│       ├── home.ts
+│       ├── servicios.ts
+│       ├── productos.ts
+│       └── sobreMi.ts
 │
 └── app/
     ├── layout.tsx                     ← layout raíz: fuentes, header, footer
     ├── globals.css                    ← tokens CSS, reset
     ├── page.tsx                       ← / (Inicio)
+    ├── icon.png                       ← favicon
+    ├── apple-icon.png                 ← ícono para iOS
     ├── sitemap.ts                     ← genera /sitemap.xml
     ├── robots.ts                      ← genera /robots.txt
     │
@@ -179,7 +204,8 @@ puepu-bienestar/
     │   └── submitContact.ts           ← Server Action del formulario
     │
     ├── servicios/
-    │   ├── terapia-mtch/
+    │   ├── page.tsx                   ← índice de servicios
+    │   ├── medicina-tradicional-china/
     │   │   └── page.tsx
     │   ├── banos-de-bosque/
     │   │   └── page.tsx
@@ -207,23 +233,26 @@ Directorio de componentes:
 components/
 ├── layout/
 │   ├── Header.tsx
-│   ├── Footer.tsx
-│   └── Navigation.tsx
+│   └── Footer.tsx
 │
 ├── ui/
 │   ├── Button.tsx
 │   ├── ServiceCard.tsx
-│   └── ProductCard.tsx
+│   ├── ProductCard.tsx
+│   └── InstagramIcon.tsx
 │
 ├── sections/
 │   ├── Hero.tsx
+│   ├── ServiceHero.tsx
+│   ├── ServiceLayout.tsx
 │   ├── ServicesGrid.tsx
 │   ├── PhotoGallery.tsx
 │   └── CallToAction.tsx
 │
 └── forms/
     ├── ContactForm.tsx              ← componente cliente con estado
-    └── TurnstileWidget.tsx          ← wrapper del widget de Cloudflare
+    ├── TurnstileWidget.tsx          ← wrapper del widget de Cloudflare (modo Invisible)
+    └── GraciasGuard.tsx             ← protege /gracias si no hubo envío
 ```
 
 ## 4. Convenciones de código
@@ -241,7 +270,7 @@ Utilidades:    camelCase
                lib/formatWhatsAppLink.ts → export function formatWhatsAppLink()
 
 Imágenes:      kebab-case
-               public/images/galeria/bosque-interior-01.webp
+               public/images/galeria/fotos-bosque.jpg
 ```
 
 ### TypeScript
@@ -257,7 +286,13 @@ type ContactFormData = {
 }
 
 // ✅ BIEN: tipo de retorno explícito en Server Actions
-async function submitContact(data: ContactFormData): Promise<{ success: boolean; error?: string }>
+type SubmitContactResult = {
+  success: boolean;
+  error?: string;
+  errorType?: "validacion" | "turnstile" | "envio";
+  fieldErrors?: FieldErrors;
+}
+async function submitContact(data: ContactFormData): Promise<SubmitContactResult>
 
 // ❌ MAL: never usar any
 const data: any = formData; // Prohibido
@@ -290,7 +325,7 @@ Siempre usar el componente `<Image />` de Next.js:
 // ✅ BIEN
 import Image from "next/image"
 <Image
-  src="/images/galeria/bosque-01.webp"
+  src="/images/galeria/fotos-bosque.jpg"
   alt="Interior de la Selva Valdiviana, árboles nativos con luz lateral"
   width={800}
   height={1200}
@@ -325,14 +360,14 @@ import Image from "next/image"
 - [ ] Ninguna variable privada de entorno en código cliente
 - [ ] Todas las imágenes usan `<Image />` con `alt` descriptivo
 - [ ] No hay `console.log` sin eliminar en código de producción
-- [ ] El formulario maneja los 5 estados: inicial, enviando, éxito, error Turnstile, error Resend
+- [ ] El formulario maneja los 5 estados (inicial, enviando, éxito, error Turnstile, error Resend) + errores de validación por campo
 - [ ] `prefers-reduced-motion` respetado en animaciones
 
 ## 6. Checklist antes de deploy a producción (paso 8)
 
-- [ ] Variables de entorno reales configuradas en Vercel (no placeholders)
-- [ ] Dominio verificado en Resend — sin esto, el formulario solo envía al correo de la cuenta de Resend, no al correo de Gloria. Verificar ANTES de probar el formulario en producción.
-- [ ] Dominio configurado en Cloudflare y Vercel
+- [ ] Variables de entorno reales configuradas en Vercel (cuenta Cauce Digital, plan Hobby; no placeholders)
+- [ ] Dominio `puepubienestar.cl` verificado en Resend — sin esto, el formulario solo envía al correo de la cuenta de Resend, no al correo de Gloria. Verificar ANTES de probar el formulario en producción.
+- [ ] Dominio `puepubienestar.cl` configurado en Cloudflare y Vercel
 - [ ] SSL activo y verificado
 - [ ] Envío del formulario probado end-to-end (Gloria recibe el correo)
 - [ ] `npm audit` sin vulnerabilidades críticas
@@ -345,6 +380,6 @@ import Image from "next/image"
 - No crea tablas de base de datos (no hay BD).
 - No instala librerías de animación pesadas sin actualizar el TRD.
 - No usa `dangerouslySetInnerHTML`.
-- No hardcodea el correo de Gloria ni el número de WhatsApp en el código — siempre desde variables de entorno.
+- No hardcodea el correo de Gloria ni el número de WhatsApp en el código — siempre desde variables de entorno. El enlace de Instagram es un dato público y vive en `lib/constants.ts` (`INSTAGRAM_URL`), no en variables de entorno.
 - No commitea `.env.local` ni ningún archivo con secretos reales.
 - No crea archivos temporales fuera de `./scratch/`.

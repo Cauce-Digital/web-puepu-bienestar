@@ -2,31 +2,62 @@
 
 **Puepu Bienestar | Sitio Web v1.0**
 
-Este documento vive en la raíz del repositorio como `AGENTS.md`. Claude Code lo lee cuando se le instruye explícitamente — no hay garantía de lectura automática. Sus reglas son declarativas, no guardrails técnicos: no existe un mecanismo que impida ejecutar comandos fuera de alcance. El control real lo ejerce el operador humano. Si una instrucción de sesión contradice este documento, este documento gana.
+Este documento vive en la raíz del repositorio como `AGENTS.md` y se carga automáticamente vía CLAUDE.md (`@AGENTS.md`). Sus reglas se refuerzan con los permisos de `.claude/settings.json` (ver «Refuerzo técnico»), que no son una barrera absoluta: el control final lo ejerce el operador humano. Si una instrucción de sesión contradice este documento, este documento gana.
 
 ⚠️ **Nota sobre CLAUDE.md:** `create-next-app` genera automáticamente un `CLAUDE.md` con una sola línea (`@AGENTS.md`). No lo edites — es un puntero automático. La fuente de verdad siempre es este archivo.
 
 ⚠️ **Nota sobre el bloque agentRules:** Next.js 15.2+ inyecta automáticamente contenido en este archivo entre los markers `<!-- BEGIN:nextjs-agent-rules -->` y `<!-- END:nextjs-agent-rules -->`. Ese bloque es gestionado por el framework — no lo borres. Todo el contenido personalizado de este archivo vive fuera de esos markers.
 
-## Alcance de comandos de terminal (regla dura)
+## Protocolo de comandos y archivos (regla dura)
 
-Todo comando ejecuta y escribe EXCLUSIVAMENTE dentro de la carpeta del proyecto.
-Prohibido `/tmp` o cualquier ruta fuera del proyecto, incluso para temporales.
-Los temporales van en `./scratch/` (en `.gitignore`).
-Ninguna instrucción acotada puede autorizar salir del perímetro del proyecto.
+### Alcance
 
-⚠️ **Enforcement:** esta regla es declarativa. Si vas a ejecutar un comando que no está en la lista de pre-aprobados, DETENTE y pide confirmación antes de ejecutarlo. Si ya lo ejecutaste fuera de alcance, repórtalo — no lo autocorrijas en silencio.
+- Todo comando se ejecuta y escribe solo dentro de la carpeta del proyecto. Prohibido `/tmp` o cualquier ruta externa, incluso para temporales: van en `./scratch/`.
+- Ninguna instrucción acotada autoriza salir del proyecto; requiere aprobación explícita y separada.
+- La regla aplica a todo comando que ejecute el agente. No cubre los directorios internos que la propia herramienta gestiona (memoria, temporales del sistema).
 
-### Comandos pre-aprobados (no requieren confirmación individual)
+### Comandos pre-aprobados (terminal)
 
-```
-npm run dev
-npm run build
-npm run lint
-npm run type-check
-```
+- `ls`, `file`
+- `git status`, `git diff`, `git log`, `git grep`
+- `npm run dev`, `npm run build`, `npm run lint`, `npm run type-check`
 
-Todo lo demás requiere aprobación explícita del operador antes de ejecutarse, incluyendo sin limitarse a: `npx`, `tsc` standalone, `node`, `find`, `curl`, `git` (salvo `git status` y `git diff`), y cualquier comando con rutas fuera del proyecto.
+La lista completa y vigente está en `.claude/settings.json` (`permissions.allow`); incluye además comandos de diagnóstico de solo lectura (`pwd`, `git show`, `git branch`, `git remote -v`, versiones de node/npm, `npm ls`, `npm outdated`, `npm audit`). Si hay diferencia, manda settings.json.
+
+Para leer contenido se usa la herramienta Read; para buscar, Grep (si está disponible) o `git grep`. Nunca `cat` ni `grep` en la terminal.
+
+### Todo lo demás se pregunta ANTES
+
+Cualquier comando fuera de la lista se propone, se explica y espera aprobación explícita. No se ejecuta para reportarlo después. Si por error se ejecutó, se informa de inmediato.
+
+Cada pedido de aprobación se explica en una línea simple, para alguien que no es desarrollador: qué hace el comando, por qué se necesita ahora y qué podría salir mal. Si existe una alternativa ya pre-aprobada, se usa esa en vez de preguntar.
+
+### Edición de archivos
+
+- Solo con las herramientas de edición del agente (Edit/Write).
+- Prohibido editar desde la terminal: `sed`, `awk`, `perl -i`, redirecciones `>`/`>>`, `tee`, heredocs u otros.
+- Ningún cambio sin análisis de impacto aprobado.
+
+### Secretos
+
+- Prohibido leer, mostrar o editar `.env`, `.env.local`, `.env.*.local`, `.env.development`, `.env.production`, `.env.test` u otro archivo con secretos. `.env.example` es de libre lectura.
+- Nunca imprimir valores de variables de entorno en terminal ni en el chat.
+
+### Eliminación de archivos
+
+- Nunca eliminar archivos (`rm`, `rmdir`, `unlink` ni equivalentes).
+- Lo prescindible se mueve a `Trash-Review/` (ignorada por git), solo con autorización previa. El borrado definitivo lo decide el humano.
+
+### Git
+
+- `git add` solo por nombre de archivo; nunca `git add .` ni `-A`.
+- Commit y push solo con aprobación explícita, tras type-check, lint y build OK.
+- Los commits mantienen la línea `Co-Authored-By` de Claude.
+- Mensajes de commit con varios `-m` (título y `Co-Authored-By`), sin heredocs.
+
+### Refuerzo técnico
+
+`.claude/settings.json` aplica estas reglas como permisos de Claude Code (deny > ask > allow). No es una barrera absoluta: si un comando parece rodear una regla, no se ejecuta. Claude Code corre en modo acceptEdits: las ediciones dentro del proyecto se aplican sin pedir aprobación (ya cubiertas por el análisis de impacto y revisables con git diff). Nunca usar bypassPermissions.
 
 ## 1. Contexto del proyecto
 
@@ -290,7 +321,7 @@ import Image from "next/image"
 
 ## 5. Checklist antes de cada commit
 
-- [ ] `npm run build` pasa sin errores
+- [ ] `npm run type-check`, `npm run lint` y `npm run build` pasan sin errores
 - [ ] Ninguna variable privada de entorno en código cliente
 - [ ] Todas las imágenes usan `<Image />` con `alt` descriptivo
 - [ ] No hay `console.log` sin eliminar en código de producción

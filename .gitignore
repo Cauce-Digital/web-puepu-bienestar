@@ -46,3 +46,6 @@ scratch/
 
 # archivos retirados pendientes de revisión
 Trash-Review/
+
+# configuración local de Claude Code (no compartir)
+.claude/settings.local.json

@@ -65,7 +65,7 @@ Cada pedido de aprobación se explica en una línea simple, para alguien que no 
 
 **Hosting:** Vercel, cuenta Cauce Digital, plan Hobby.
 
-**Sin base de datos.** No hay BD propia en este proyecto. La única lógica de servidor es el Server Action del formulario de contacto.
+**Sin base de datos.** No hay BD propia en este proyecto. La lógica de servidor se limita al Server Action del formulario de contacto y a la lectura del feed de Instagram en `lib/instagram.ts` (servidor, ISR cada 12 h).
 
 **Sin autenticación.** El sitio es completamente público. No hay login, roles ni sesiones.
 
@@ -139,11 +139,34 @@ CONTACT_EMAIL=                   # Correo donde llegan los formularios (solo ser
 CONTACT_FROM_EMAIL=              # Remitente de las notificaciones (solo servidor)
 NEXT_PUBLIC_WHATSAPP_NUMBER=     # Número de WhatsApp para links y botones (cliente)
 NEXT_PUBLIC_SITE_URL=            # URL pública del sitio, https://puepubienestar.cl (solo Production en Vercel)
+INSTAGRAM_ACCESS_TOKEN=          # Token de larga duración de Instagram (solo servidor; Production, opcional en Preview)
 ```
 
 Plantilla sin valores reales: `.env.example`.
 
-**Regla:** Ninguna variable de entorno privada (`RESEND_API_KEY`, `TURNSTILE_SECRET_KEY`, `CONTACT_EMAIL`, `CONTACT_FROM_EMAIL`) puede aparecer en código del lado cliente. Solo `NEXT_PUBLIC_*` van al cliente.
+**Regla:** Ninguna variable de entorno privada (`RESEND_API_KEY`, `TURNSTILE_SECRET_KEY`, `CONTACT_EMAIL`, `CONTACT_FROM_EMAIL`, `INSTAGRAM_ACCESS_TOKEN`) puede aparecer en código del lado cliente. Solo `NEXT_PUBLIC_*` van al cliente.
+
+### Feed de Instagram
+
+Además del Server Action, el servidor lee el feed de Instagram al generar el inicio.
+
+- `lib/instagram.ts` → `getInstagramFeed()`: llama a `graph.instagram.com/me/media` (Instagram API con inicio de sesión de Instagram) con `fetch` y `next: { revalidate: 43200, tags: ["instagram"] }`. Solo servidor. Nunca lanza error: ante cualquier fallo devuelve `null`. Timeout de 5 s.
+- `components/sections/InstagramFeed.tsx`: muestra 6 publicaciones (pide 12). Si hay menos de 6 válidas, completa con `homeContent.galeria`; si no hay ninguna o el resultado es `null`, muestra la galería estática completa.
+- `app/page.tsx` exporta `revalidate = 43200` (ISR cada 12 h).
+- Tipos de publicación: IMAGE → `media_url`; VIDEO → `thumbnail_url`; CAROUSEL_ALBUM → primer elemento de `children`. Las que no tienen imagen utilizable se descartan.
+- `alt`: `alt_text` de la publicación si existe; si no, "Publicación de Instagram de Puepu Bienestar: " + primeros ~80 caracteres del texto.
+- Los dominios permitidos (`**.cdninstagram.com`, `**.fbcdn.net`) están en `next.config.ts` (`images.remotePatterns`) y en `ALLOWED_IMAGE_HOSTS` de `lib/instagram.ts`; mantenerlos en sincronía.
+
+**Renovación manual del token (cada ~50 días; vence a los 60):**
+
+1. Renovar el token vigente (debe tener más de 24 h y no estar vencido):
+   `GET https://graph.instagram.com/refresh_access_token?grant_type=ig_refresh_token&access_token=<TOKEN_ACTUAL>`
+   La respuesta trae el nuevo `access_token` y `expires_in`.
+2. Actualizar `INSTAGRAM_ACCESS_TOKEN` en Vercel (Production y, si se usa, Preview).
+3. Redeploy de producción para que tome el valor nuevo.
+4. Anotar la fecha de la próxima renovación.
+
+Si el token vence, el sitio no se rompe: el inicio muestra la galería estática. No hay cron ni renovación automática.
 
 ## 3. Estructura de archivos
 
@@ -185,6 +208,7 @@ puepu-bienestar/
 │   ├── escapeHtml.ts                  ← escape del HTML del correo
 │   ├── telefono.ts                    ← validación de teléfono
 │   ├── formatWhatsAppLink.ts          ← link de WhatsApp (NEXT_PUBLIC_WHATSAPP_NUMBER)
+│   ├── instagram.ts                   ← feed de Instagram, solo servidor (INSTAGRAM_ACCESS_TOKEN)
 │   └── content/
 │       ├── home.ts
 │       ├── servicios.ts
@@ -247,6 +271,7 @@ components/
 │   ├── ServiceLayout.tsx
 │   ├── ServicesGrid.tsx
 │   ├── PhotoGallery.tsx
+│   ├── InstagramFeed.tsx            ← feed de Instagram con respaldo a la galería estática
 │   └── CallToAction.tsx
 │
 └── forms/
@@ -337,6 +362,8 @@ import Image from "next/image"
 ```
 
 **Regla:** todo `alt` describe lo que se ve en la imagen, no "foto de" ni vacío.
+
+**Regla:** Toda imagen nueva o reemplazada en `public/` debe tener un nombre de archivo nuevo. Por `minimumCacheTTL` de 31 días (`next.config.ts`), reemplazar un archivo con el mismo nombre puede seguir mostrando la versión anterior hasta 31 días.
 
 ### Tailwind CSS
 

@@ -26,6 +26,10 @@ const proveedores = [
   },
   { nombre: "Resend", uso: "envío del correo con tu mensaje." },
   { nombre: "Google (Gmail)", uso: "bandeja donde se recibe tu mensaje." },
+  {
+    nombre: "Meta (Instagram)",
+    uso: "muestra las publicaciones recientes de @puepu_bienestar.",
+  },
 ];
 
 function EnlacesContacto() {

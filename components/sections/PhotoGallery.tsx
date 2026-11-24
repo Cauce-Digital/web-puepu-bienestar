@@ -8,10 +8,16 @@ type PhotoGalleryEnlace = {
   ctaLabel: string;
 };
 
+// href opcional por imagen (por ejemplo, el permalink de una publicación de
+// Instagram). Si no viene, la imagen usa enlace.href como hasta ahora.
+export type PhotoGalleryImage = HomeImage & {
+  href?: string;
+};
+
 type PhotoGalleryProps = {
   titulo: string;
   texto?: string;
-  imagenes: HomeImage[];
+  imagenes: PhotoGalleryImage[];
   enlace?: PhotoGalleryEnlace;
 };
 
@@ -45,13 +51,18 @@ export default function PhotoGallery({
             />
           );
 
-          return enlace ? (
+          const href = imagen.href ?? enlace?.href;
+          const ariaLabel = imagen.href
+            ? `${imagen.alt} (se abre en una pestaña nueva)`
+            : enlace?.ariaLabel;
+
+          return href ? (
             <a
               key={imagen.src}
-              href={enlace.href}
+              href={href}
               target="_blank"
               rel="noopener noreferrer"
-              aria-label={enlace.ariaLabel}
+              aria-label={ariaLabel}
               className="relative block aspect-square w-full overflow-hidden rounded-xl transition-opacity hover:opacity-90"
             >
               {foto}

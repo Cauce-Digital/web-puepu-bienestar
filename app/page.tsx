@@ -3,11 +3,14 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import Hero from "@/components/sections/Hero";
 import ServicesGrid from "@/components/sections/ServicesGrid";
-import PhotoGallery from "@/components/sections/PhotoGallery";
+import InstagramFeed from "@/components/sections/InstagramFeed";
 import CallToAction from "@/components/sections/CallToAction";
 import { homeContent } from "@/lib/content/home";
-import { INSTAGRAM_URL } from "@/lib/constants";
 import { buildMetadata } from "@/lib/seo";
+
+// Regenera el inicio cada 12 h para refrescar el feed de Instagram (ISR).
+// Debe ser un número literal: Next.js no evalúa expresiones aquí.
+export const revalidate = 43200;
 
 export const metadata: Metadata = buildMetadata({
   title: {
@@ -58,16 +61,7 @@ export default function Home() {
 
       <ServicesGrid />
 
-      <PhotoGallery
-        titulo="Sígueme en Instagram"
-        texto="Comparto el bosque, las plantas y mis actividades en @puepu_bienestar."
-        imagenes={homeContent.galeria}
-        enlace={{
-          href: INSTAGRAM_URL,
-          ariaLabel: "Ver en Instagram (se abre en una pestaña nueva)",
-          ctaLabel: "Ver en Instagram",
-        }}
-      />
+      <InstagramFeed />
 
       <CallToAction
         titulo="¿Te animas a comenzar?"
